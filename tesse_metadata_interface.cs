@@ -183,7 +183,7 @@ namespace tesse
                     if ((data.Length == 4) && (System.Convert.ToChar(data[0]) == 'r') && (System.Convert.ToChar(data[1]) == 'M')
                       && (System.Convert.ToChar(data[2]) == 'E') && (System.Convert.ToChar(data[3]) == 'T'))
                     {
-                        print("received request for metadata!\n");
+                        // print("received request for metadata!\n");
                         // process metadata request
                         lock (met_request_lock)
                         {

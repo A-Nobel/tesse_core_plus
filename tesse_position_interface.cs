@@ -128,7 +128,8 @@ namespace tesse
         // public GameObject chair_office;
         Vector3 chairPos = new Vector3(-9.5f, 1.0f, 32.0f);
         Vector3 chairRot = new Vector3(0,0,90);
-
+        private Vector3 dest_cmd = new Vector3(0.0f, 0.0f,0.0f);
+        private bool dest_flag = false;
 
         // reference to object segmentation
         private object_segmentation os = null;
@@ -214,7 +215,7 @@ namespace tesse
 
 
             //for navigation
-            GotoNextPoint();
+            // GotoNextPoint();
         }
 
         void Awake()
@@ -241,9 +242,18 @@ namespace tesse
         {
             lock(pos_request_lock)
             {
-                if (!mr.pathPending && mr.remainingDistance < 0.3f){
-                GotoNextPoint();
+                // if (!mr.pathPending && mr.remainingDistance < 0.3f){
+                if (dest_flag) // dest requested
+                {
+
+                    
+                    mr.SetDestination(dest_cmd);
+                    // reset flag to thread
+                    dest_flag = false;
                 }
+
+                // GotoNextPoint();
+                // }
                 
                 //get click to go
                 // if (Input.GetMouseButtonDown(0))
@@ -564,6 +574,7 @@ namespace tesse
         
         void OnApplicationQuit()
         {
+            Debug.Log("quit pos");
             // ensure position udp listener thread is stopped
             pos_request_running = false;
 
@@ -590,6 +601,7 @@ namespace tesse
             {
                 // listen on listen_port from any ip address
                 pos_request_ip = new IPEndPoint(IPAddress.Any, pos_listen_port);
+                Debug.Log("ip"+IPAddress.Any.ToString());
             }
             catch (SocketException ex)
             {
@@ -602,6 +614,7 @@ namespace tesse
             // check to ensure the thread should continue running
             while (pos_request_running)
             {
+                // Debug.Log("listening..pos..dest");
                 // if (Input.GetMouseButtonDown(0))
                 // {             //获取鼠标点击的点，
                 //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -619,7 +632,7 @@ namespace tesse
                 {
                     // get data from udp port
                     byte[] data = pos_request_client.Receive(ref pos_request_ip);
-
+                    Debug.Log("data"+BitConverter.ToString(data));
                     // process data
                     if ((data.Length == 16) && (System.Convert.ToChar(data[0]) == 'T') && (System.Convert.ToChar(data[1]) == 'L')
                         && (System.Convert.ToChar(data[2]) == 'P') && (System.Convert.ToChar(data[3]) == 'T'))
@@ -650,6 +663,24 @@ namespace tesse
                                 teleport_cmd.y = System.BitConverter.ToSingle(data, 8); // delta z
                                 teleport_cmd.z = System.BitConverter.ToSingle(data, 12); // delta theta around y axis
                                 teleport_flag = true; // set flag to signal command to Unity Update() thread
+                            }
+                        }
+                    }
+                    else if ((data.Length == 16) && (System.Convert.ToChar(data[0]) == 'D') && (System.Convert.ToChar(data[1]) == 'E')
+                        && (System.Convert.ToChar(data[2]) == 'S') && (System.Convert.ToChar(data[3]) == 'T'))
+                    {
+                        // process teleport request
+                        lock (pos_request_lock)
+                        {
+                            // we keep the fixed capture mode commands and real-time mode commands different
+                            //to ensure that the user knows the mode of the simulation
+                            // if (frame_rate > 0) // only accept this command if fixed capture mode is active
+                            {
+                                Debug.Log("go to dest");
+                                dest_cmd.x = System.BitConverter.ToSingle(data, 4); // delta x
+                                dest_cmd.y = System.BitConverter.ToSingle(data, 8); // delta z
+                                dest_cmd.z = System.BitConverter.ToSingle(data, 12); // delta theta around y axis
+                                dest_flag = true; // set flag to signal command to Unity Update() thread
                             }
                         }
                     }
@@ -792,22 +823,22 @@ namespace tesse
                     {
                         // change scene request received
                         // ensure requested index is valid
-                        int index = System.BitConverter.ToInt32(data, 4); // requested scene index
-                        if (index <= num_scenes)
-                        {
-                            lock (pos_request_lock)
-                            {
-                                new_scene_index = index; // set new scene index
-                                change_scene_flag = true; // flag to signal command to Unity Update() thread
-                                pos_client_addr = pos_request_ip.Address; // set requester's ip address, for confirmation message
-                            }
-                        }
-                        else
-                        {
-                            // invalid index requested, respond with fail message, this will give the user a valid
-                            //set of scene indexes that can be chosen
-                            send_scene_response(false);
-                        }
+                        // int index = System.BitConverter.ToInt32(data, 4); // requested scene index
+                        // if (index <= num_scenes)
+                        // {
+                        //     lock (pos_request_lock)
+                        //     {
+                        //         new_scene_index = index; // set new scene index
+                        //         change_scene_flag = true; // flag to signal command to Unity Update() thread
+                        //         pos_client_addr = pos_request_ip.Address; // set requester's ip address, for confirmation message
+                        //     }
+                        // }
+                        // else
+                        // {
+                        //     // invalid index requested, respond with fail message, this will give the user a valid
+                        //     //set of scene indexes that can be chosen
+                        //     send_scene_response(false);
+                        // }
 
                     }
                     else if ((data.Length == 8) && (System.Convert.ToChar(data[0]) == 'S') && (System.Convert.ToChar(data[1]) == 'E')
@@ -1023,6 +1054,8 @@ namespace tesse
             System.Buffer.BlockCopy(uint_header, 0, p_header, 0, uint_header.Length * sizeof(System.UInt32));
 
             // send image data back to client via tcp
+            Debug.Log("ip"+pos_client_addr.ToString());
+            Debug.Log("port"+pos_send_port);
             IPEndPoint client_ep = new IPEndPoint(pos_client_addr, pos_send_port);
 
             Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
