@@ -821,6 +821,7 @@ namespace tesse
                     else if ((data.Length == 8) && (System.Convert.ToChar(data[0]) == 'C') && (System.Convert.ToChar(data[1]) == 'S')
                       && (System.Convert.ToChar(data[2]) == 'c') && (System.Convert.ToChar(data[3]) == 'N'))
                     {
+                        // lfchange
                         // change scene request received
                         // ensure requested index is valid
                         // int index = System.BitConverter.ToInt32(data, 4); // requested scene index

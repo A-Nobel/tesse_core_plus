@@ -77,9 +77,11 @@ public class object_segmentation : MonoBehaviour {
 
         using (var reader = new StreamReader(csv_path))
         {
+            reader.ReadLine();
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
+                // print(line);
                 var values = line.Split(',');
 
                 int r = -1, g = -1, b = -1, a = -1;
@@ -87,7 +89,8 @@ public class object_segmentation : MonoBehaviour {
                 // in the csv column 0 is the class label, column 1 is the red value, column 2 is the green value and column 3 is the blue value
                 if (int.TryParse(values[1], out r) && int.TryParse(values[2], out g) && int.TryParse(values[3], out b) && int.TryParse(values[4], out a) )
                 {
-                    color_mapping.Add(values[0], new Color32((byte)r, (byte)g, (byte)b, (byte)a));
+                    print(values[0].ToLower());
+                    color_mapping.Add(values[0].ToLower(), new Color32((byte)r, (byte)g, (byte)b, (byte)a));
                 }
                 else
                 {
@@ -167,6 +170,7 @@ public class object_segmentation : MonoBehaviour {
             }
 
             File.WriteAllText(file_path, csv.ToString());
+            Debug.Log("csv not exits!!!");
         }
 
         // assign colors to materials based on csv
@@ -216,12 +220,13 @@ public class object_segmentation : MonoBehaviour {
         */
 
         Color c = new Color();
-        if( color_mapping.TryGetValue(name, out c) )
+        if( color_mapping.TryGetValue(name.ToLower(), out c) )
         {
             // found the color, return it
             return c;
         }
-        print("Unable to get segmentation color for " + name);
+        if(name.ToLower().Contains("chair"))
+        Debug.Log("Unable to get segmentation color for " + name.ToLower());;
         return new Color(0f, 0f, 0f, 0f);
     }
 
