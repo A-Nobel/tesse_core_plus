@@ -38,16 +38,16 @@ namespace tesse
     public class tesse_command_line_parser : MonoBehaviour
     {
         // port setup for all tesse components 
-        public int pos_listen_port = 9000; // udp port to listen for requests
-        public int met_listen_port = 9001; // udp port to listen to requests
-        public int img_listen_port = 9002; // port to listen for image requests on 
-        public int pos_update_port = 9003; // udp port to send position responses back to clients
-        public int step_listen_port = 9005; // tcp port to listen for fixed capture mode step commands
+        public int pos_listen_port = 19000; // udp port to listen for requests
+        public int met_listen_port = 19001; // udp port to listen to requests
+        public int img_listen_port = 19002; // port to listen for image requests on 
+        public int pos_update_port = 19003; // udp port to send position responses back to clients
+        public int step_listen_port = 19005; // tcp port to listen for fixed capture mode step commands
         // NOTE: you can simultaneously use tcp and udp ports
-        public int pos_send_port = 9000; // tcp port to send responses to clients
-        public int met_send_port = 9001; // tcp port to send metadata information to clients
-        public int img_send_port = 9002; // tcp port to response to image requests on
-        public int met_broadcast_port = 9004; // udp port to send high rate metadata information
+        public int pos_send_port = 19000; // tcp port to send responses to clients
+        public int met_send_port = 19001; // tcp port to send metadata information to clients
+        public int img_send_port = 19002; // tcp port to response to image requests on
+        public int met_broadcast_port = 19004; // udp port to send high rate metadata information
 
         // default parameters for keyboard control
         public float speed = 2f;

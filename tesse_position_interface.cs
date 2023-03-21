@@ -1,27 +1,4 @@
-﻿/*
-###################################################################################################
-# DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.
-#
-# This material is based upon work supported by the Under Secretary of Defense for Research and
-# Engineering under Air Force Contract No. FA8702-15-D-0001. Any opinions, findings, conclusions
-# or recommendations expressed in this material are those of the author(s) and do not necessarily
-# reflect the views of the Under Secretary of Defense for Research and Engineering.
-#
-# (c) 2020 Massachusetts Institute of Technology.
-#
-# MIT Proprietary, Subject to FAR52.227-11 Patent Rights - Ownership by the contractor (May 2014)
-#
-# The software/firmware is provided to you on an As-Is basis
-#
-# Delivered to the U.S. Government with Unlimited Rights, as defined in DFARS Part 252.227-7013
-# or 7014 (Feb 2014). Notwithstanding any copyright notice, U.S. Government rights in this work
-# are defined by DFARS 252.227-7013 or DFARS 252.227-7014 as detailed above. Use of this work other
-# than as specifically authorized by the U.S. Government may violate any copyrights that exist in
-# this work.
-###################################################################################################
-*/
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -46,11 +23,11 @@ namespace tesse
         //click to go
         NavMeshAgent mr;
         // port assignments from tesse command line parser
-        private int pos_listen_port = 9000; // udp port to listen for requests
-        private int step_listen_port = 9005; // tcp port for listening to step requests
-        private int pos_update_port = 9003; // udp port to send position responses back to clients
+        private int pos_listen_port = 19000; // udp port to listen for requests
+        private int step_listen_port = 19005; // tcp port for listening to step requests
+        private int pos_update_port = 19003; // udp port to send position responses back to clients
         // NOTE: you can simultaneously use tcp and udp ports
-        private int pos_send_port = 9000; // tcp port to send responses to clients
+        private int pos_send_port = 19000; // tcp port to send responses to clients
 
         // udp socket object for listener
         private UdpClient pos_request_client = null;
@@ -129,7 +106,9 @@ namespace tesse
         Vector3 chairPos = new Vector3(-9.5f, 1.0f, 32.0f);
         Vector3 chairRot = new Vector3(0,0,90);
         private Vector3 dest_cmd = new Vector3(0.0f, 0.0f,0.0f);
+        private int room_patrol = 0;
         private bool dest_flag = false;
+        private bool patrol_flag =false;
 
         // reference to object segmentation
         private object_segmentation os = null;
@@ -150,7 +129,15 @@ namespace tesse
         bool set_time_scale_flag = false;
 
         //for navigation
-        private Vector3[] points = new Vector3[7];
+        private Vector3[] points1 = {new Vector3(-10,1,20),
+        new Vector3(-1.5f,1,20f),new Vector3(-1.5f,1,15.5f),new Vector3(-10f,1,15.5f),
+        new Vector3(-14.5f,1,15.5f),new Vector3(-14.5f,1,11.5f),
+        new Vector3(-10f,1,11.5f),new Vector3(-1.5f,1,11.5f),
+        new Vector3(-1.5f,1,20f),new Vector3(-10f,1,20f),new Vector3(-10f,1,20f)};
+
+        private Vector3[] points2 = {new Vector3(-10.2f,1,29f),new Vector3(-11f,1,33f),
+        new Vector3(-11.5f,1,36f),new Vector3(-8.5f,1,36.5f),new Vector3(-5.5f,1,36.5f),
+        new Vector3(-5.5f,1,33.7f),new Vector3(-5.5f,1,29.2f),new Vector3(-5.5f,1,29.2f)};
         private int destPoint = 0;
 
 
@@ -165,21 +152,21 @@ namespace tesse
             //get click to go
             mr = GetComponent<NavMeshAgent>();
             //for navigation
-            Debug.Log("Get...........length"+points.Length);
-            points[0] = (new Vector3(-9.7f, 1.0f, 32.0f));
-            points[1] = (new Vector3(-3.5f, 1.0f, 13.7f));
-            points[2] = (new Vector3(-0.5f, 1.0f, 17.5f));
-            points[3] = (new Vector3(7.5f, 1.0f, 27.5f));//cesuo
-            points[4] = (new Vector3(12.5f, 1.0f, 32f));//huiyishi
-            points[5] = (new Vector3(21.5f, 1.0f, 22.5f));//office1
-            points[6] = (new Vector3(21.5f, 1.0f, 34.5f));//office2
+            // Debug.Log("Get...........length"+points.Length);
+            // points[0] = (new Vector3(-9.7f, 1.0f, 32.0f));
+            // points[1] = (new Vector3(-3.5f, 1.0f, 13.7f));
+            // points[2] = (new Vector3(-0.5f, 1.0f, 17.5f));
+            // points[3] = (new Vector3(7.5f, 1.0f, 27.5f));//cesuo
+            // points[4] = (new Vector3(12.5f, 1.0f, 32f));//huiyishi
+            // points[5] = (new Vector3(21.5f, 1.0f, 22.5f));//office1
+            // points[6] = (new Vector3(21.5f, 1.0f, 34.5f));//office2
             
 
             // setup ports from tesse command line parser
-            pos_listen_port = cla_parser.pos_listen_port;
-            pos_send_port = cla_parser.pos_send_port;
-            pos_update_port = cla_parser.pos_update_port;
-            step_listen_port = cla_parser.step_listen_port;
+            // pos_listen_port = cla_parser.pos_listen_port;
+            // pos_send_port = cla_parser.pos_send_port;
+            // pos_update_port = cla_parser.pos_update_port;
+            // step_listen_port = cla_parser.step_listen_port;
 
             // start position request listener thread
             pos_request_thread = new Thread(() => pos_request_listener());
@@ -224,17 +211,23 @@ namespace tesse
             spawner = GetComponent<tesse_spawn_manager>();
         }
 
-        void GotoNextPoint() {
+        void GotoNextPoint(Vector3[] p) {
             // Returns if no points have been set up
-            if (points.Length == 0)
+            
+            if (p.Length == 0)
                 return;
 
             // Set the agent to go to the currently selected destination.
-            mr.SetDestination(points[destPoint]);
-
+            mr.SetDestination(p[destPoint]);
+            Debug.Log("Get...........length"+destPoint);
+            destPoint +=1;
             // Choose the next point in the array as the destination,
             // cycling to the start if necessary.
-            destPoint = (destPoint + 1) % points.Length;
+            if(destPoint+1 == p.Length){
+                destPoint =0;
+                patrol_flag =false;
+            }
+            // destPoint = (destPoint + 1) % points.Length;
         }
 
         // Update is called once per frame
@@ -245,13 +238,35 @@ namespace tesse
                 // if (!mr.pathPending && mr.remainingDistance < 0.3f){
                 if (dest_flag) // dest requested
                 {
-
-                    
                     mr.SetDestination(dest_cmd);
                     // reset flag to thread
                     dest_flag = false;
                 }
 
+                if(patrol_flag){
+                    if(room_patrol == 1){
+                        if (!mr.pathPending && mr.remainingDistance < 0.3f){
+                                GotoNextPoint(points1);
+                        }
+                    } else if(room_patrol == 2){
+                        if (!mr.pathPending && mr.remainingDistance < 0.3f){
+                                GotoNextPoint(points2);
+                        }
+                    }
+                }
+                                        // while(!(!mr.pathPending && mr.remainingDistance < 0.3f)){}
+                        // mr.SetDestination(new Vector3(-10,1,20));
+                        // // while(!(!mr.pathPending && mr.remainingDistance < 0.3f)){}
+                        // mr.SetDestination(new Vector3(-1.5f,1,20f));
+                        // mr.SetDestination(new Vector3(-1.5f,1,15.2f));
+                        // mr.SetDestination(new Vector3(-10f,1,15.2f));
+                        // mr.SetDestination(new Vector3(-14.5f,1,15.2f));
+                        // mr.SetDestination(new Vector3(-14.5f,1,11.5f));
+                        // mr.SetDestination(new Vector3(-10f,1,11.5f));
+                        // mr.SetDestination(new Vector3(-1.5f,1,11.5f));
+                        // mr.SetDestination(new Vector3(-1.5f,1,20f));
+                        // mr.SetDestination(new Vector3(-10f,1,20f));
+                        // while(!(!mr.pathPending && mr.remainingDistance < 0.3f)){}
                 // GotoNextPoint();
                 // }
                 
@@ -595,7 +610,7 @@ namespace tesse
 
             // instaniate Udp listener
             pos_request_client = new UdpClient(pos_listen_port);
-
+            Debug.Log(pos_listen_port);
             IPEndPoint pos_request_ip = null;
             try
             {
@@ -684,6 +699,20 @@ namespace tesse
                             }
                         }
                     }
+                    //PATR + Room_No.
+                    else if ((data.Length == 16) && (System.Convert.ToChar(data[0]) == 'P') && (System.Convert.ToChar(data[1]) == 'A')
+                        && (System.Convert.ToChar(data[2]) == 'T') && (System.Convert.ToChar(data[3]) == 'R'))
+                    {
+                        lock (pos_request_lock)
+                        {
+                            {
+                                room_patrol = (int)System.BitConverter.ToSingle(data, 4); // room No.
+                                Debug.Log("go to Patrol"+room_patrol);
+                                patrol_flag = true; // set flag to signal command to Unity Update() thread
+                            }
+                        }
+                    }
+
                     else if ((data.Length == 12) && (System.Convert.ToChar(data[0]) == 'x') && (System.Convert.ToChar(data[1]) == 'B')
                       && (System.Convert.ToChar(data[2]) == 'F') && (System.Convert.ToChar(data[3]) == 'F'))
                     {

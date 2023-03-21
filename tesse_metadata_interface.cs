@@ -40,11 +40,11 @@ namespace tesse
         */
 
         // port setup for all tesse components that inherit this class
-        private int met_listen_port = 9001; // udp port to listen to requests
+        private int met_listen_port = 19001; // udp port to listen to requests
         // NOTE: you can simultaneously use tcp and udp ports
-        private int met_send_port = 9001; // tcp port to send metadata information to clients
+        private int met_send_port = 19001; // tcp port to send metadata information to clients
 
-        private int met_broadcast_port = 9004; // udp port used to broadcast high right metadata information
+        private int met_broadcast_port = 19004; // udp port used to broadcast high right metadata information
 
         // udp socket object for listener
         private UdpClient met_request_client = null;

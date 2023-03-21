@@ -89,7 +89,7 @@ public class object_segmentation : MonoBehaviour {
                 // in the csv column 0 is the class label, column 1 is the red value, column 2 is the green value and column 3 is the blue value
                 if (int.TryParse(values[1], out r) && int.TryParse(values[2], out g) && int.TryParse(values[3], out b) && int.TryParse(values[4], out a) )
                 {
-                    print(values[0].ToLower());
+                    // print(values[0].ToLower());
                     color_mapping.Add(values[0].ToLower(), new Color32((byte)r, (byte)g, (byte)b, (byte)a));
                 }
                 else
