@@ -140,7 +140,7 @@ namespace tesse
         new Vector3(-5.5f,1,33.7f),new Vector3(-5.5f,1,29.2f),new Vector3(-5.5f,1,29.2f)};
         private int destPoint = 0;
 
-
+        private UdpClient udpClient;
         // Start is called before the first frame update
         new void Start()
         {
@@ -226,6 +226,22 @@ namespace tesse
             if(destPoint+1 == p.Length){
                 destPoint =0;
                 patrol_flag =false;
+                            
+            try
+            {   udpClient = new UdpClient();
+                Debug.Log("try");
+                IPEndPoint uu_client_ep = new IPEndPoint(IPAddress.Any, 19009);
+                Byte[] sendBytes = Encoding.ASCII.GetBytes("DONE");
+                udpClient.Send(sendBytes, sendBytes.Length,uu_client_ep);
+                Debug.Log("Send"+sendBytes.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex.ToString());
+                Console.WriteLine(ex.ToString());
+
+            }
+
             }
             // destPoint = (destPoint + 1) % points.Length;
         }
@@ -629,20 +645,6 @@ namespace tesse
             // check to ensure the thread should continue running
             while (pos_request_running)
             {
-                // Debug.Log("listening..pos..dest");
-                // if (Input.GetMouseButtonDown(0))
-                // {             //获取鼠标点击的点，
-                //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                //     RaycastHit rayhit;  //声明RacastHit类型
-                //     if (Physics.Raycast(ray, out rayhit))
-                //     {
-                //         if (rayhit.transform.name == "Plane") //判断是不是点击地面
-                //         {                     //鼠标点击的点赋值给目标点
-                //             mr.SetDestination(rayhit.point);
-                //         }
-                //     }
-                // }
-                // poll port to see if data is available
                 if (pos_request_client.Client.Poll(1000, SelectMode.SelectRead))
                 {
                     // get data from udp port
@@ -712,7 +714,6 @@ namespace tesse
                             }
                         }
                     }
-
                     else if ((data.Length == 12) && (System.Convert.ToChar(data[0]) == 'x') && (System.Convert.ToChar(data[1]) == 'B')
                       && (System.Convert.ToChar(data[2]) == 'F') && (System.Convert.ToChar(data[3]) == 'F'))
                     {
@@ -850,26 +851,7 @@ namespace tesse
                     else if ((data.Length == 8) && (System.Convert.ToChar(data[0]) == 'C') && (System.Convert.ToChar(data[1]) == 'S')
                       && (System.Convert.ToChar(data[2]) == 'c') && (System.Convert.ToChar(data[3]) == 'N'))
                     {
-                        // lfchange
-                        // change scene request received
-                        // ensure requested index is valid
-                        // int index = System.BitConverter.ToInt32(data, 4); // requested scene index
-                        // if (index <= num_scenes)
-                        // {
-                        //     lock (pos_request_lock)
-                        //     {
-                        //         new_scene_index = index; // set new scene index
-                        //         change_scene_flag = true; // flag to signal command to Unity Update() thread
-                        //         pos_client_addr = pos_request_ip.Address; // set requester's ip address, for confirmation message
-                        //     }
-                        // }
-                        // else
-                        // {
-                        //     // invalid index requested, respond with fail message, this will give the user a valid
-                        //     //set of scene indexes that can be chosen
-                        //     send_scene_response(false);
-                        // }
-
+                        //delete change scenes
                     }
                     else if ((data.Length == 8) && (System.Convert.ToChar(data[0]) == 'S') && (System.Convert.ToChar(data[1]) == 'E')
                       && (System.Convert.ToChar(data[2]) == 'E') && (System.Convert.ToChar(data[3]) == 'D'))
