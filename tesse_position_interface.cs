@@ -351,6 +351,7 @@ namespace tesse
 
                     if (Physics.Raycast(ray, out hit))
                     {
+                        Debug.Log("hit"+hit.point);
                         mr.SetDestination(hit.point);
                     }
                 }
