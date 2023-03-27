@@ -138,6 +138,17 @@ namespace tesse
         private Vector3[] points2 = {new Vector3(-10.2f,1,29f),new Vector3(-11f,1,33f),
         new Vector3(-11.5f,1,36f),new Vector3(-8.5f,1,36.5f),new Vector3(-5.5f,1,36.5f),
         new Vector3(-5.5f,1,33.7f),new Vector3(-5.5f,1,29.2f),new Vector3(-5.5f,1,29.2f)};
+
+        private Vector3[] points3 = {new Vector3(5.96f,1,28.36f),new Vector3(5.63f,1,31.18f),
+        new Vector3(5.96f,1,28.36f),new Vector3(5.96f,1,28.36f)};
+        
+        private Vector3[] points4 = {new Vector3(10.6f,1,28.07f),new Vector3(9.03f,1,29.11f),
+        new Vector3(8.83f,1,34.32f),new Vector3(10.40f,1,34.40f),new Vector3(11.93f,1,33.84f),
+        new Vector3(12.23f,1,31.03f),new Vector3(10.6f,1,28.07f),new Vector3(10.6f,1,28.07f)};//8.37 28.13;12.09 28.21
+
+        private Vector3[] points5 = {new Vector3(-21.97f,1,26.09f),new Vector3(-21.07f,1,26.08f),
+        new Vector3(-21.07f,1,26.08f)};
+
         private int destPoint = 0;
 
         private UdpClient udpClient;
@@ -268,6 +279,18 @@ namespace tesse
                         if (!mr.pathPending && mr.remainingDistance < 0.3f){
                                 GotoNextPoint(points2);
                         }
+                    } else if(room_patrol == 3){
+                        if (!mr.pathPending && mr.remainingDistance < 0.3f){
+                                GotoNextPoint(points3);
+                        }
+                    } else if(room_patrol == 4){
+                        if (!mr.pathPending && mr.remainingDistance < 0.3f){
+                                GotoNextPoint(points4);
+                        }
+                    } else if(room_patrol == 5){
+                        if (!mr.pathPending && mr.remainingDistance < 0.3f){
+                                GotoNextPoint(points5);
+                        }
                     }
                 }
                                         // while(!(!mr.pathPending && mr.remainingDistance < 0.3f)){}
@@ -299,50 +322,50 @@ namespace tesse
                 //         }
                 //     }
                 // }
-                if (Input.GetKey(KeyCode.Alpha1))
-                {
-                    mr.SetDestination(new Vector3(-9.7f, 1.0f, 32.0f));
-                    Debug.Log("Get...........room1");
-                    // mr.SetDestination(new Vector3(-9.7f, 1.0f, 32.0f));
-                }
+                // if (Input.GetKey(KeyCode.Alpha1))
+                // {
+                //     mr.SetDestination(new Vector3(-9.7f, 1.0f, 32.0f));
+                //     Debug.Log("Get...........room1");
+                //     // mr.SetDestination(new Vector3(-9.7f, 1.0f, 32.0f));
+                // }
 
-                if (Input.GetKey(KeyCode.Alpha2))
-                {
-                    mr.SetDestination(new Vector3(-3.5f, 1.0f, 13.7f));
-                    Debug.Log("Get...........2");
-                }
+                // if (Input.GetKey(KeyCode.Alpha2))
+                // {
+                //     mr.SetDestination(new Vector3(-3.5f, 1.0f, 13.7f));
+                //     Debug.Log("Get...........2");
+                // }
 
-                if (Input.GetKey(KeyCode.Alpha3))
-                {
-                    mr.SetDestination(new Vector3(21.5f, 1.0f, 34.5f));
-                    Debug.Log("Get...........room3");
-                    // mr.SetDestination(new Vector3(29.5f, 1.0f, 34.5f));
-                    // mr.SetDestination(new Vector3(29.5f, 1.0f, 22.5f));
-                    // mr.SetDestination(new Vector3(25.5f, 1.0f, 22.5f));
-                }
+                // if (Input.GetKey(KeyCode.Alpha3))
+                // {
+                //     mr.SetDestination(new Vector3(21.5f, 1.0f, 34.5f));
+                //     Debug.Log("Get...........room3");
+                //     // mr.SetDestination(new Vector3(29.5f, 1.0f, 34.5f));
+                //     // mr.SetDestination(new Vector3(29.5f, 1.0f, 22.5f));
+                //     // mr.SetDestination(new Vector3(25.5f, 1.0f, 22.5f));
+                // }
                 // if(!mr.pathPending && mr.remainingDistance < mr.stoppingDistance){
                 // // 移动终止
                 // Debug.Log("over");
                 // }
 
-                if (Input.GetKey(KeyCode.Alpha4))
-                {
-                        GameObject new_object;
-                        new_object = Instantiate(spawnableObjects[0],
-                                chairPos,
-                                Quaternion.Euler(chairRot));
+                // if (Input.GetKey(KeyCode.Alpha4))
+                // {
+                //         GameObject new_object;
+                //         new_object = Instantiate(spawnableObjects[0],
+                //                 chairPos,
+                //                 Quaternion.Euler(chairRot));
 
-                        new_object.name = spawnableObjects[requested_spawn_object.index].name;
-                        spawned_objects.Add(next_spawn_object_id++, new_object);  // Add to dictionary of spawned objects
+                //         new_object.name = spawnableObjects[requested_spawn_object.index].name;
+                //         spawned_objects.Add(next_spawn_object_id++, new_object);  // Add to dictionary of spawned objects
 
-                        // Update semantic segmentation
-                        Renderer r = new_object.GetComponent(typeof(Renderer)) as Renderer;
-                        Color obj_color = os.get_object_segmentation_color_by_name(new_object.name);
-                        var mpb = new MaterialPropertyBlock();
-                        r.GetPropertyBlock(mpb); // ensure that we persist the values of the current properties block
-                        mpb.SetColor("_ObjectColor", obj_color); // set the color property; this is used by the UberReplacement shader
-                        r.SetPropertyBlock(mpb);
-                }
+                //         // Update semantic segmentation
+                //         Renderer r = new_object.GetComponent(typeof(Renderer)) as Renderer;
+                //         Color obj_color = os.get_object_segmentation_color_by_name(new_object.name);
+                //         var mpb = new MaterialPropertyBlock();
+                //         r.GetPropertyBlock(mpb); // ensure that we persist the values of the current properties block
+                //         mpb.SetColor("_ObjectColor", obj_color); // set the color property; this is used by the UberReplacement shader
+                //         r.SetPropertyBlock(mpb);
+                // }
 
                 if (Input.GetMouseButtonDown(0))
                 {
