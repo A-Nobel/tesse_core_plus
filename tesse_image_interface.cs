@@ -177,6 +177,7 @@ namespace tesse
         }
 
         // Update is called once per frame
+        // Cost a lot of time, so disable vsync can increase the fps
         void LateUpdate()
         {
             // lock used to ensure listener thread and Unity Update() threads do not race
