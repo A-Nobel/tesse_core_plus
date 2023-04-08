@@ -569,7 +569,7 @@ namespace tesse
                         print("Unable to spawn object at index " + requested_spawn_object.index + ". Number of spawnable objects is " + spawnableObjects.Count + ".");
                     }
  
-                    send_objects(); // send a response with list of objects
+                    // send_objects(); // send a response with list of objects
                     spawn_object_flag = false; // reset the command flag
                 }
             }
