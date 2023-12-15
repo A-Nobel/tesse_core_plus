@@ -129,15 +129,15 @@ namespace tesse
         bool set_time_scale_flag = false;
 
         //for navigation
-        private Vector3[] points1 = {new Vector3(-10,1,20),
-        new Vector3(-1.5f,1,20f),new Vector3(-1.5f,1,15.5f),new Vector3(-10f,1,15.5f),
+        private Vector3[] points1 = {new Vector3(-10,1,19.6f),
+        new Vector3(-1.5f,1,19.6f),new Vector3(-1.5f,1,15.5f),new Vector3(-10f,1,15.5f),
         new Vector3(-14.5f,1,15.5f),new Vector3(-14.5f,1,11.5f),
         new Vector3(-10f,1,11.5f),new Vector3(-1.5f,1,11.5f),
-        new Vector3(-1.5f,1,20f),new Vector3(-10f,1,20f),new Vector3(-10f,1,20f)};
+        new Vector3(-1.5f,1,19.6f),new Vector3(-10f,1,19.6f),new Vector3(-14.5f,1,19.6f),new Vector3(-14.5f,1,15.5f),new Vector3(-1.5f,1,15.5f),new Vector3(-1.5f,1,19.6f),new Vector3(-10f,1,19.6f)};
 
         private Vector3[] points2 = {new Vector3(-10.2f,1,29f),new Vector3(-11f,1,33f),
         new Vector3(-11.5f,1,36f),new Vector3(-8.5f,1,36.5f),new Vector3(-5.5f,1,36.5f),
-        new Vector3(-5.5f,1,33.7f),new Vector3(-5.5f,1,29.2f),new Vector3(-5.5f,1,29.2f)};
+        new Vector3(-5.5f,1,33.7f),new Vector3(-5.5f,1,29.2f),new Vector3(-10.2f,1,29f),new Vector3(-5.5f,1,29.2f),new Vector3(-5.5f,1,36.5f),new Vector3(-11f,1,33f)};
 
         private Vector3[] points3 = {new Vector3(5.96f,1,28.36f),new Vector3(5.63f,1,31.18f),
         new Vector3(5.96f,1,28.36f),new Vector3(5.96f,1,28.36f)};
@@ -148,6 +148,20 @@ namespace tesse
 
         private Vector3[] points5 = {new Vector3(-21.97f,1,26.09f),new Vector3(-21.07f,1,26.08f),
         new Vector3(-21.07f,1,26.08f)};
+
+        private Vector3[] points6 = {new Vector3(21.35f,1,31f),new Vector3(19.61f,1,39.87f),new Vector3(24.02f,1,38.28f),
+        new Vector3(27.17f,1,38.44f),new Vector3(27.17f,1,31.02f),new Vector3(24.45f,1,30.98f),
+        new Vector3(24.02f,1,38.28f),new Vector3(16.39f,1,35.57f),new Vector3(15.99f,1,26.08f),new Vector3(21.39f,1,25.57f),new Vector3(13.39f,1,25.57f),new Vector3(19.5f,1,25f),
+        new Vector3(19.39f,1,30.61f),new Vector3(20.45f,1,39.98f),new Vector3(20.78f,1,30.56f),new Vector3(19.78f,1,25.56f)
+        };//huge office from up
+
+        private Vector3[] points7 = {new Vector3(9.1f,1,37.11f),new Vector3(8.31f,1,37.11f),
+        new Vector3(8.36f,1,42.97f),new Vector3(12.32f,1,42.24f),new Vector3(13.08f,1,42.42f),
+        new Vector3(11.86f,1,37.11f),new Vector3(8.31f,1,37.11f),new Vector3(5.33f,1,36.97f)};//locker room
+
+        private Vector3[] points8 = {new Vector3(24.49f,1,24.21f),new Vector3(27.86f,1,24.21f),
+        new Vector3(27.86f,1,27.44f),new Vector3(24.53f,1,27.38f),new Vector3(24.49f,1,24.21f)
+        };//boss office
 
         private int destPoint = 0;
 
@@ -281,15 +295,15 @@ namespace tesse
                         }
                     } else if(room_patrol == 3){
                         if (!mr.pathPending && mr.remainingDistance < 0.3f){
-                                GotoNextPoint(points3);
+                                GotoNextPoint(points6);
                         }
                     } else if(room_patrol == 4){
                         if (!mr.pathPending && mr.remainingDistance < 0.3f){
-                                GotoNextPoint(points4);
+                                GotoNextPoint(points7);
                         }
                     } else if(room_patrol == 5){
                         if (!mr.pathPending && mr.remainingDistance < 0.3f){
-                                GotoNextPoint(points5);
+                                GotoNextPoint(points8);
                         }
                     }
                 }

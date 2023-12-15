@@ -220,6 +220,7 @@ public class tesse_spawn_manager : MonoBehaviour
     public void load_spawn_points(int scene_index = 0)
     {
         sceneSpawnFile = Application.streamingAssetsPath + Path.DirectorySeparatorChar + SceneManager.GetSceneByBuildIndex(scene_index).name + ".points";
+        Debug.Log("Loading spawn points from: " + sceneSpawnFile);
         if (File.Exists(sceneSpawnFile))
         {
             JsonUtility.FromJsonOverwrite(File.ReadAllText(sceneSpawnFile), sceneSpawnPoints);
